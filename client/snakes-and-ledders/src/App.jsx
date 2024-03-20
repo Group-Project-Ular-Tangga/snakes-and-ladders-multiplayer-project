@@ -1,35 +1,65 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import { socket } from './utils/socket';
+
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [playerName, setPlayerName] = useState('');
+  const [players, setPlayers] = useState({});
+  const [currentPlayer, setCurrentPlayer] = useState(null);
+  const [winner, setWinner] = useState(null);
+
+  useEffect(() => {
+    socket.on('updatePlayers', (updatedPlayers) => {
+      setPlayers(updatedPlayers);
+    });
+
+    socket.on('playerWins', (winningPlayer) => {
+      setWinner(winningPlayer);
+    });
+
+  }, []);
+
+  const joinGame = () => {
+    socket.emit('joinGame', playerName);
+    setCurrentPlayer(playerName);
+  };
+
+  const rollDice = () => {
+    socket.emit('rollDice');
+  };
 
   return (
-    <>
+    <div>
+      <h1>Ular Tangga</h1>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        {currentPlayer ? (
+          <>
+            <p>Giliran Kamu, {currentPlayer}!</p>
+            <button onClick={rollDice} disabled={winner}>Kocok Dadu</button>
+          </>
+        ) : (
+          <>
+            <input
+              type="text"
+              value={playerName}
+              onChange={(e) => setPlayerName(e.target.value)}
+              placeholder="Enter your name"
+            />
+            <button onClick={joinGame}>Join Game</button>
+          </>
+        )}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+      <div>
+        <h2>Players:</h2>
+        <ul>
+          {Object.values(players).map((player) => (
+            <li key={player.id}>{player.name} - {player.position}</li>
+          ))}
+        </ul>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      {winner && <p>{winner.name} wins!</p>}
+    </div>
+  );
 }
 
-export default App
+export default App;
