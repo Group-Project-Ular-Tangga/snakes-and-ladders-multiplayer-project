@@ -13,6 +13,10 @@ const io = new Server(server, {
 
 const finish = 100;
 
+app.get("/", (req, res) => {
+  res.send("Snakes And Ledders Home Page");
+});
+
 let players = {};
 
 io.on("connection", (socket) => {
@@ -49,8 +53,8 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// server.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`);
+// });
 
-module.exports = app;
+module.exports = server;
