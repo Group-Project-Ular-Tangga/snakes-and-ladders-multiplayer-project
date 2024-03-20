@@ -1,0 +1,114 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+}
+
+h2 {
+  font-weight: 700;
+}
+
+.name-input-container {
+  width: 450px;
+  height: 300px;
+  border-radius: 16px;
+  box-shadow: rgba(83, 139, 223, 0.8) 0px 2px 8px 0px;
+  background: #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px;
+  gap: 20px;
+}
+
+input {
+  width: 80%;
+  height: 48px;
+  border-radius: 16px;
+  border: 1px solid rgb(168, 60, 60);
+  padding: 5px 10px;
+  text-align: center;
+  font-size: 20px;
+}
+
+input:focus {
+  outline: none;
+  width: 80%;
+  height: 48px;
+  border-radius: 16px;
+}
+
+.button-join {
+  background-color: #3f3e5e;
+  width: 80%;
+  height: 48px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 20px;
+  color: #f0f0f0;
+  transition: 0.3s;
+}
+
+.button-join:active {
+  transform: scale(0.98);
+}
+
+.button-back {
+  background-color: #3f3e5e;
+  height: 24px;
+  width: 60px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #3f3e5e;
+  background-color: #f0f0f0;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+}
+
+.svg-spinners--bars-scale {
+  display: inline-block;
+  width: 48px;
+  height: 48px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='2.8' height='12' x='1' y='6' fill='%23f0f0f0'%3E%3Canimate id='svgSpinnersBarsScale0' attributeName='y' begin='0;svgSpinnersBarsScale1.end-0.1s' calcMode='spline' dur='0.6s' keySplines='.36,.61,.3,.98;.36,.61,.3,.98' values='6;1;6'/%3E%3Canimate attributeName='height' begin='0;svgSpinnersBarsScale1.end-0.1s' calcMode='spline' dur='0.6s' keySplines='.36,.61,.3,.98;.36,.61,.3,.98' values='12;22;12'/%3E%3C/rect%3E%3Crect width='2.8' height='12' x='5.8' y='6' fill='%23f0f0f0'%3E%3Canimate attributeName='y' begin='svgSpinnersBarsScale0.begin+0.1s' calcMode='spline' dur='0.6s' keySplines='.36,.61,.3,.98;.36,.61,.3,.98' values='6;1;6'/%3E%3Canimate attributeName='height' begin='svgSpinnersBarsScale0.begin+0.1s' calcMode='spline' dur='0.6s' keySplines='.36,.61,.3,.98;.36,.61,.3,.98' values='12;22;12'/%3E%3C/rect%3E%3Crect width='2.8' height='12' x='10.6' y='6' fill='%23f0f0f0'%3E%3Canimate attributeName='y' begin='svgSpinnersBarsScale0.begin+0.2s' calcMode='spline' dur='0.6s' keySplines='.36,.61,.3,.98;.36,.61,.3,.98' values='6;1;6'/%3E%3Canimate attributeName='height' begin='svgSpinnersBarsScale0.begin+0.2s' calcMode='spline' dur='0.6s' keySplines='.36,.61,.3,.98;.36,.61,.3,.98' values='12;22;12'/%3E%3C/rect%3E%3Crect width='2.8' height='12' x='15.4' y='6' fill='%23f0f0f0'%3E%3Canimate attributeName='y' begin='svgSpinnersBarsScale0.begin+0.3s' calcMode='spline' dur='0.6s' keySplines='.36,.61,.3,.98;.36,.61,.3,.98' values='6;1;6'/%3E%3Canimate attributeName='height' begin='svgSpinnersBarsScale0.begin+0.3s' calcMode='spline' dur='0.6s' keySplines='.36,.61,.3,.98;.36,.61,.3,.98' values='12;22;12'/%3E%3C/rect%3E%3Crect width='2.8' height='12' x='20.2' y='6' fill='%23f0f0f0'%3E%3Canimate id='svgSpinnersBarsScale1' attributeName='y' begin='svgSpinnersBarsScale0.begin+0.4s' calcMode='spline' dur='0.6s' keySplines='.36,.61,.3,.98;.36,.61,.3,.98' values='6;1;6'/%3E%3Canimate attributeName='height' begin='svgSpinnersBarsScale0.begin+0.4s' calcMode='spline' dur='0.6s' keySplines='.36,.61,.3,.98;.36,.61,.3,.98' values='12;22;12'/%3E%3C/rect%3E%3C/svg%3E");
+}
+
+.player-count {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  color: #f0f0f0;
+}
+
+.board {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 55vh;
+  width: 55vh;
+  background: url("./board.png");
+  background-size: contain;
+}
+
+.dice {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dice img {
+  width: 20vh;
+  height: 20vh;
+}
