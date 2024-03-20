@@ -1,15 +1,14 @@
 const express = require("express");
 const { createServer } = require("http");
-const { Server } = require("socket.io");
 
 const PORT = process.env.PORT || 3000;
 const app = express();
-const server = createServer(app);
-const io = new Server(server, {
+const server = require('http').Server(app)
+const io = require('socket.io')(server, {
   cors: {
-    origin: "*",
-  },
-});
+      origin: ['http://localhost:5173']
+  }
+})
 
 const finish = 100;
 
@@ -17,44 +16,46 @@ app.get("/", (req, res) => {
   res.send("Snakes And Ledders Home Page");
 });
 
-let players = {};
+let players = [];
 
 io.on("connection", (socket) => {
-  console.log(`Hello ${socket.id}`);
+  socket.on("player-joined", (playerName) => {
+    if(players.length < 2) {
+      players.push({name : playerName, id: socket.id})
+    }
+    
+    socket.join('room')
+
+    socket.nsp.to('room').emit('players-updated', players)
+
+    if(players.length === 2) {
+      socket.nsp.to('room').emit('set-turn', players[0].name)
+    }
+  });
+
+  socket.on("roll-dice", (turn) => {
+    if(turn === players[0].name) {
+      socket.nsp.to('room').emit('set-turn', players[1].name)
+    } else {
+      socket.nsp.to('room').emit('set-turn', players[0].name)
+    }
+  });
 
   socket.on("disconnect", () => {
-    console.log(`${socket.id} disconnected`);
-    if (socket.id in players) {
-      delete players[socket.id];
-      io.emit("updatePlayers", players);
-    }
-  });
-
-  socket.on("joinGame", (playerName) => {
-    players[socket.id] = {
-      id: socket.id,
-      name: playerName,
-      position: 0,
-    };
-    io.emit("updatePlayers", players);
-  });
-
-  socket.on("rollDice", () => {
-    const diceValue = Math.floor(Math.random() * 6) + 1;
-    const newPosition = players[socket.id].position + diceValue;
-
-    if (newPosition >= finish) {
-      players[socket.id].position = finish;
-      io.emit("playerWins", players[socket.id]);
+    const index = players.findIndex((player) => player.id === socket.id)
+    if(index === 0) {
+      players.shift()
     } else {
-      players[socket.id].position = newPosition;
-      io.emit("updatePlayers", players);
+      players.pop()
     }
+
+    socket.leave('room')
+    socket.nsp.to('room').emit('players-updated', players)
   });
 });
 
-// server.listen(PORT, () => {
-//   console.log(`Server running on port ${PORT}`);
-// });
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 module.exports = server;
