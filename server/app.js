@@ -5,57 +5,111 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 const server = require('http').Server(app)
 const io = require('socket.io')(server, {
-  cors: {
-      origin: ['http://localhost:5173']
-  }
+    cors: {
+        origin: ['http://localhost:5173']
+    }
 })
 
 const finish = 100;
 
+const SnakesAndLadders = {
+    43: 17,
+    50: 5,
+    56: 8,
+    73: 15,
+    84: 58,
+    87: 49,
+    99: 40,
+    //Tangga
+    2:23,
+    6:45,
+    20:59,
+    52:72,
+    57:96,
+    71:92,
+    //Roket
+    4:68,
+    30:96
+
+};
+
 app.get("/", (req, res) => {
-  res.send("Snakes And Ledders Home Page");
+    res.send("Snakes And Ladders Home Page");
 });
 
 let players = [];
 
+function update(playernum) {
+    if (newPosition >= finish) {
+        players[playernum].position = finish;
+        io.emit('playerWins', players[playernum]);
+    } else {
+        players[playernum].position = newPosition;
+        io.emit('updatePlayers', players);
+    }
+}
 io.on("connection", (socket) => {
-  socket.on("player-joined", (playerName) => {
-    if(players.length < 2) {
-      players.push({name : playerName, id: socket.id})
-    }
-    
-    socket.join('room')
+    socket.on("player-joined", (playerName) => {
+        if (players.length < 2) {
+            players.push({ name: playerName, id: socket.id, position: 0 })
+        }
 
-    socket.nsp.to('room').emit('players-updated', players)
+        socket.join('room')
 
-    if(players.length === 2) {
-      socket.nsp.to('room').emit('set-turn', players[0].name)
-    }
-  });
+        socket.nsp.to('room').emit('players-updated', players)
 
-  socket.on("roll-dice", (turn) => {
-    if(turn === players[0].name) {
-      socket.nsp.to('room').emit('set-turn', players[1].name)
-    } else {
-      socket.nsp.to('room').emit('set-turn', players[0].name)
-    }
-  });
+        if (players.length === 2) {
+            socket.nsp.to('room').emit('set-turn', players[0].name)
+        }
+    });
 
-  socket.on("disconnect", () => {
-    const index = players.findIndex((player) => player.id === socket.id)
-    if(index === 0) {
-      players.shift()
-    } else {
-      players.pop()
-    }
+    socket.on("roll-dice", (turn) => {
+        const diceValue = Math.floor(Math.random() * 6) + 1;
+        let newPosition
+        if (turn === players[0].name) {
+            newPosition = players[0].position + diceValue;
+            if (SnakesAndLadders[newPosition]) {
+                newPosition = SnakesAndLadders[newPosition]
+            }
+            if (newPosition >= finish) {
+                players[0].position = finish;
+                io.emit('playerWins', players[0]);
+            } else {
+                players[0].position = newPosition;
+                io.emit('updatePlayers', players);
+            }
+            socket.nsp.to('room').emit('set-turn', players[1].name)
+        } else {
+            newPosition = players[1].position + diceValue;
+            if (SnakesAndLadders[newPosition]) {
+                newPosition = SnakesAndLadders[newPosition]
+            }
+            if (newPosition >= finish) {
+                players[1].position = finish;
+                io.emit('playerWins', players[1]);
+            } else {
+                players[1].position = newPosition;
+                io.emit('updatePlayers', players);
+            }
+            socket.nsp.to('room').emit('set-turn', players[0].name)
+        }
+    });
 
-    socket.leave('room')
-    socket.nsp.to('room').emit('players-updated', players)
-  });
+    socket.on("disconnect", () => {
+        const index = players.findIndex((player) => player.id === socket.id)
+        if (index === 0) {
+            players.shift()
+        } else {
+            players.pop()
+        }
+
+        socket.leave('room')
+        socket.nsp.to('room').emit('players-updated', players)
+    });
 });
 
 server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
 
 module.exports = server;
