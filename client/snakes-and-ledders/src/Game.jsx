@@ -20,6 +20,7 @@ const Game = () => {
   const location = useLocation();
   const [players, setPlayers] = useState([]);
   const [turn, setTurn] = useState('')
+  const [winner, setWinner] = useState(null);
 
   const handleBack = () => {
     navigate("/", { state: { playerName: "" } });
@@ -50,6 +51,16 @@ const Game = () => {
 
   }, [location]);
 
+  useEffect(() => {
+    socket.on('updatePlayers', (updatedPlayers) => {
+      setPlayers(updatedPlayers);
+    });
+
+    socket.on('playerWins', (winningPlayer) => {
+      setWinner(winningPlayer);
+    });
+  }, []);
+
   return (
     <div style={containerStyle}>
       <button className="button-back" onClick={handleBack}>
@@ -57,6 +68,13 @@ const Game = () => {
       </button>
       <h3 className="player-count">Player Count: {players.length}</h3>
       {players.length < 2 ? <Loader /> : <Board turn={turn} rollDice={handleRollDice}/>}
+      <h2>Players:</h2>
+        <ul>
+          {Object.values(players).map((player) => (
+            <li key={player.id}>{player.name} - {player.position}</li>
+          ))}
+        </ul>
+        {winner && <p>{winner.name} wins!</p>}
     </div>
   );
 };
