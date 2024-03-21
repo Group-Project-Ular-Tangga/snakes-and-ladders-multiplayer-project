@@ -1,0 +1,35 @@
+.App {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.tboard {
+  display: inline-block;
+  border: 1px solid black;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  flex: 1;
+  border: 1px solid black;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.player {
+  background-color: blue;
+  color: white;
+}
+
+.controls {
+  margin-top: 20px;
+}
+
+button {
+  margin-bottom: 10px;
+}
