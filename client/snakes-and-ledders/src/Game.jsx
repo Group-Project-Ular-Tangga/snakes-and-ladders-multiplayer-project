@@ -36,6 +36,7 @@ const Game = () => {
     }
     socket.emit("player-joined", location.state.playerName);
     socket.on("players-updated", (payload) => {
+      console.log(payload,'<<<<<<')
       setPlayers(payload);
     });
 
@@ -66,7 +67,7 @@ const Game = () => {
         Back
       </button>
       <h3 className="player-count">Player Count: {players.length}</h3>
-      {players.length < 2 ? <Loader /> : <Board turn={turn} rollDice={handleRollDice}/>}
+      {players.length < 2 ? <Loader /> : <Board turn={turn} rollDice={handleRollDice} players={players}/>}
       <h2>Players:</h2>
         <ul>
           {Object.values(players).map((player) => (
