@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Loader from "./components/Loader";
-import io from "socket.io-client";
 import Board from "./components/Board";
+import { socket } from "./utils/socket";
 
-const socket = io.connect("http://localhost:3000");
 
 const containerStyle = {
   width: "100vw",
