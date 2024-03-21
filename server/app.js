@@ -12,12 +12,31 @@ const io = require('socket.io')(server, {
 
 const finish = 100;
 
+const SnakesAndLadders = {
+    43: 17,
+    50: 5,
+    56: 8,
+    73: 15,
+    84: 58,
+    87: 49,
+    99: 40
+};
+
 app.get("/", (req, res) => {
     res.send("Snakes And Ladders Home Page");
 });
 
 let players = [];
 
+function update(playernum) {
+    if (newPosition >= finish) {
+        players[playernum].position = finish;
+        io.emit('playerWins', players[playernum]);
+    } else {
+        players[playernum].position = newPosition;
+        io.emit('updatePlayers', players);
+    }
+}
 io.on("connection", (socket) => {
     socket.on("player-joined", (playerName) => {
         if (players.length < 2) {
@@ -38,23 +57,29 @@ io.on("connection", (socket) => {
         let newPosition
         if (turn === players[0].name) {
             newPosition = players[0].position + diceValue;
+            if (SnakesAndLadders[newPosition]) {
+                newPosition = SnakesAndLadders[newPosition]
+            }
             if (newPosition >= finish) {
                 players[0].position = finish;
                 io.emit('playerWins', players[0]);
-              } else {
+            } else {
                 players[0].position = newPosition;
                 io.emit('updatePlayers', players);
-              }
+            }
             socket.nsp.to('room').emit('set-turn', players[1].name)
         } else {
             newPosition = players[1].position + diceValue;
+            if (SnakesAndLadders[newPosition]) {
+                newPosition = SnakesAndLadders[newPosition]
+            }
             if (newPosition >= finish) {
                 players[1].position = finish;
                 io.emit('playerWins', players[1]);
-              } else {
+            } else {
                 players[1].position = newPosition;
                 io.emit('updatePlayers', players);
-              }
+            }
             socket.nsp.to('room').emit('set-turn', players[0].name)
         }
     });
